@@ -1,0 +1,8 @@
+[core]
+    remote = dagshub
+[cache]
+    dir = cache
+['remote "dagshub"']
+    url = https://dagshub.com/Theepankumargandhi/multi-stage-two-tower-recommender.dvc
+    user = Theepankumargandhi
+    password = 3b536f59c2816e3b59372d423155b4000b3cd589

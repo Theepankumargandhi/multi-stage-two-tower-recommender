@@ -1,0 +1,29 @@
+stages:
+  data_retrieval:
+    cmd: python scripts/dataset.py --dataset-size 100k
+    deps:
+      - scripts/dataset.py
+    outs:
+      - data/raw
+  preprocessing:
+    cmd: python scripts/dataset.py --dataset-size 100k
+    deps:
+      - scripts/dataset.py
+      - data/raw
+    outs:
+      - data/processed
+  feature_engineering:
+    cmd: python scripts/dataset.py --dataset-size 100k
+    deps:
+      - scripts/dataset.py
+      - data/processed
+    outs:
+      - data/features
+  training:
+    cmd: python -m jupyter nbconvert --to notebook --execute train_retrieval.ipynb --ExecutePreprocessor.kernel_name=ml_env310 && python -m jupyter nbconvert --to notebook --execute train_ranking.ipynb --ExecutePreprocessor.kernel_name=ml_env310
+    deps:
+      - train_retrieval.ipynb
+      - train_ranking.ipynb
+      - data/raw
+    outs:
+      - checkpoints
