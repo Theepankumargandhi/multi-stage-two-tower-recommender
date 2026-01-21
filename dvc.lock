@@ -1,0 +1,15 @@
+schema: '2.0'
+stages:
+  data_retrieval:
+    cmd: python scripts/dataset.py --dataset-size 100k
+    deps:
+    - path: scripts/dataset.py
+      hash: md5
+      md5: 173f50f8b011edfc73a0d758c7394e8e
+      size: 2618
+    outs:
+    - path: data/raw
+      hash: md5
+      md5: 451ea7ed6cfc37e7d10011fb7c031536.dir
+      size: 8105647
+      nfiles: 6
