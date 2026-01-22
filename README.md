@@ -1,4 +1,7 @@
 # Multi-Stage Two-Tower Recommender
+![tests](https://github.com/Theepankumargandhi/multi-stage-two-tower-recommender/actions/workflows/tests.yml/badge.svg?branch=main)
+![docker-build](https://github.com/Theepankumargandhi/multi-stage-two-tower-recommender/actions/workflows/docker-build.yml/badge.svg?branch=main)
+![dvc-sync](https://github.com/Theepankumargandhi/multi-stage-two-tower-recommender/actions/workflows/dvc-sync.yml/badge.svg?branch=main)
 A multi-stage movie recommendation system using YouTube's Tow-Tower architecture.
 
 ## Getting Started
