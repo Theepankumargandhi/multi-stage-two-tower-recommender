@@ -1,6 +1,7 @@
-from typing import Dict, Any, Tuple
+from typing import Dict, Any, Tuple, List
 import os
 import time
+import json
 
 import tensorflow as tf
 from prometheus_client import Gauge
@@ -9,6 +10,9 @@ from config import (
     SCANN_PATH,
     BRUTE_PATH,
     RANKING_PATH,
+    QUERY_TOWER_PATH,
+    FAISS_INDEX_PATH,
+    FAISS_IDS_PATH,
 )
 
 try:
@@ -16,6 +20,12 @@ try:
     _has_scann = True
 except Exception:
     _has_scann = False
+
+try:
+    import faiss  # type: ignore
+    _has_faiss = True
+except Exception:
+    _has_faiss = False
 
 def _has_saved_model(path: str) -> bool:
     return os.path.isfile(os.path.join(path, "saved_model.pb")) or \
@@ -30,6 +40,15 @@ _load_start = time.perf_counter()
 scann_retrieval = tf.saved_model.load(SCANN_PATH) if _has_scann and _has_saved_model(SCANN_PATH) else None
 brute_retrieval = tf.saved_model.load(BRUTE_PATH) if _has_saved_model(BRUTE_PATH) else None
 ranking = tf.saved_model.load(RANKING_PATH) if _has_saved_model(RANKING_PATH) else None
+query_tower = tf.saved_model.load(QUERY_TOWER_PATH) if QUERY_TOWER_PATH and _has_saved_model(QUERY_TOWER_PATH) else None
+
+faiss_index = None
+faiss_ids: List[str] = []
+if _has_faiss and FAISS_INDEX_PATH and FAISS_IDS_PATH:
+    if os.path.isfile(FAISS_INDEX_PATH) and os.path.isfile(FAISS_IDS_PATH):
+        faiss_index = faiss.read_index(FAISS_INDEX_PATH)
+        with open(FAISS_IDS_PATH, "r", encoding="utf-8") as f:
+            faiss_ids = json.load(f)
 MODEL_LOAD_TIME.set(time.perf_counter() - _load_start)
 
 
@@ -51,6 +70,24 @@ def retrieve(
             - identifiers (list): A list of item identifiers.
     """
     user_tensors = {k: tf.convert_to_tensor([v]) for k, v in user.items()}
+
+    if approximate and faiss_index is not None and query_tower is not None and faiss_ids:
+        # FAISS ANN retrieval (IndexIVFFlat expected)
+        out = query_tower.signatures["call"](**user_tensors)
+        if isinstance(out, dict):
+            if "embedding" in out:
+                query_vec = out["embedding"]
+            else:
+                # fallback to first output
+                query_vec = list(out.values())[0]
+        else:
+            query_vec = out
+        query_vec = query_vec.numpy().astype("float32")
+        faiss.normalize_L2(query_vec)
+        faiss_index.nprobe = min(10, getattr(faiss_index, "nlist", 10))
+        _, indices = faiss_index.search(query_vec, k)
+        identifiers = [faiss_ids[i] for i in indices[0]]
+        return identifiers
 
     if approximate and scann_retrieval is not None:
         _ = scann_retrieval.signatures['call'](**user_tensors, k=k)  # Approximate
