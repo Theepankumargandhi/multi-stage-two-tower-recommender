@@ -12,6 +12,30 @@ make install
 ```
 This will ensure your environment is prepared with all required packages, ready to run the project.
 
+## Docker (Optional)
+You can run the API, training container, and MLflow together using Docker Compose.
+
+1) Create your env file:
+```bash
+cp .env.template .env
+```
+
+2) Start services:
+```bash
+docker compose up --build -d
+```
+
+3) Run training on demand:
+```bash
+docker compose run --rm training
+```
+
+Endpoints:
+- API: http://localhost:8000/docs
+- MLflow: http://localhost:5000
+
+Note: The compose setup uses local volumes for `data/`, `checkpoints/`, and `mlruns/` so artifacts persist across restarts.
+
 ### Usage
 Run the [test.py](test.py) for a quick start.
 

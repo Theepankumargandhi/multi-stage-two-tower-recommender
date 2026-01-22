@@ -1,0 +1,41 @@
+services:
+  mlflow:
+    image: python:3.10-slim
+    command: >
+      bash -lc "pip install mlflow==2.12.1
+      && mlflow server
+      --host 0.0.0.0
+      --port 5000
+      --backend-store-uri sqlite:///mlflow.db
+      --default-artifact-root /mlruns"
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./mlruns:/mlruns
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    env_file:
+      - .env
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./checkpoints:/app/checkpoints
+      - ./mlruns:/app/mlruns
+    depends_on:
+      - mlflow
+
+  training:
+    build:
+      context: .
+      dockerfile: Dockerfile.train
+    env_file:
+      - .env
+    volumes:
+      - ./data:/app/data
+      - ./checkpoints:/app/checkpoints
+      - ./mlruns:/app/mlruns
+    depends_on:
+      - mlflow
