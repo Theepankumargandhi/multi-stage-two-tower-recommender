@@ -1,0 +1,36 @@
+name: dvc-sync
+
+on:
+  push:
+    paths:
+      - '**/*.dvc'
+      - 'dvc.yaml'
+      - 'dvc.lock'
+
+jobs:
+  dvc-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install DVC
+        run: |
+          python -m pip install --upgrade pip
+          pip install dvc
+
+      - name: Configure DVC remote
+        env:
+          DAGSHUB_TOKEN: ${{ secrets.DAGSHUB_TOKEN }}
+        run: |
+          dvc remote modify --local dagshub user "${{ github.actor }}"
+          dvc remote modify --local dagshub password "$DAGSHUB_TOKEN"
+
+      - name: DVC push
+        run: |
+          dvc push
