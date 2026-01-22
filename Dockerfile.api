@@ -8,8 +8,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 COPY requirements.txt /app/requirements.txt
 
-RUN python -m pip install --upgrade pip \
-    && pip install -r requirements.txt
+# Filter Windows-only pins and conflicting array_record pin for Linux builds
+RUN python - <<'PY'\nfrom pathlib import Path\nreq = Path('/app/requirements.txt').read_text().splitlines()\nskip_prefixes = ('pywin32', 'tensorflow-intel', 'array_record')\nfiltered = [line for line in req if line.strip() and not line.lstrip().startswith('#')\n            and not line.strip().startswith(skip_prefixes)]\nPath('/app/requirements.docker.txt').write_text('\\n'.join(filtered) + '\\n')\nPY\n\nRUN python -m pip install --upgrade pip \\\n    && pip install -r /app/requirements.docker.txt
 
 COPY . /app
 
