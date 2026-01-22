@@ -30,7 +30,7 @@ jobs:
           file: Dockerfile.train
           push: true
           tags: |
-            ghcr.io/${{ toLower(github.repository_owner) }}/multi-stage-two-tower-recommender/training:latest
+            ghcr.io/theepankumargandhi/multi-stage-two-tower-recommender/training:latest
 
       - name: Build and push api image
         uses: docker/build-push-action@v5
@@ -39,4 +39,4 @@ jobs:
           file: Dockerfile.api
           push: true
           tags: |
-            ghcr.io/${{ toLower(github.repository_owner) }}/multi-stage-two-tower-recommender/api:latest
+            ghcr.io/theepankumargandhi/multi-stage-two-tower-recommender/api:latest
