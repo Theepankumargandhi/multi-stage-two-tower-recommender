@@ -23,6 +23,7 @@ gast==0.6.0
 google-auth==2.34.0
 google-auth-oauthlib==1.2.1
 google-pasta==0.2.0
+fastapi==0.128.0
 grpcio==1.66.1
 h5py==3.11.0
 idna==3.8
@@ -68,12 +69,19 @@ pyasn1_modules==0.4.0
 Pygments==2.18.0
 pyparsing==3.1.4
 python-dateutil==2.9.0.post0
+python-dotenv==1.2.1
 pytz==2024.1
 pyzmq==26.2.0
+prometheus_client==0.24.1
+prometheus-fastapi-instrumentator==7.1.0
+mlflow==3.8.1
+psycopg2-binary==2.9.11
 requests==2.32.3
 requests-oauthlib==2.0.0
 rich==13.8.0
 rsa==4.9
+scikit-learn==1.7.2
+scipy==1.15.3
 simple_parsing==0.1.5
 six==1.16.0
 stack-data==0.6.3
@@ -96,6 +104,7 @@ traitlets==5.14.3
 typing_extensions==4.12.2
 tzdata==2024.1
 urllib3==2.2.2
+uvicorn==0.40.0
 wcwidth==0.2.13
 Werkzeug==3.0.4
 wrapt==1.14.1
