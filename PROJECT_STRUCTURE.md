@@ -17,11 +17,17 @@ data/ -> notebooks -> checkpoints/ -> src/infer.py -> src/api.py -> client (test
 ## Top-level
 
 - `README.md`: Project overview, setup, and usage.
+- `ARCHITECTURE.md`: Architecture and system flow.
+- `API_DOCUMENTATION.md`: API endpoint details and examples.
 - `requirements.txt`: Python dependencies for training and serving.
 - `.env` / `.env.template`: Environment variables for API ports, model paths, and Redis.
 - `LICENSE`: License information.
 - `Makefile`: Convenience commands (if used).
 - `PROJECT_STRUCTURE.md`: This document.
+- `streamlit_app.py`: Streamlit UI for recommendations + metrics.
+- `docker-compose.yml`: Compose file for API, training, MLflow.
+- `.dockerignore`: Docker build context exclusions.
+- `docs/`: Documentation assets and screenshots.
 
 ## Data
 
